@@ -9,6 +9,7 @@
   --muted: #737373;
   --muted-2: #a3a3a3;
   --danger: #a3a3a3;
+  --row-hot: #0f0f0f;
 }
 
 @theme inline {

@@ -33,27 +33,28 @@ export function Leaderboard({
   return (
     <section id="board" className="panel overflow-hidden">
       <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-3 py-2.5 sm:px-4">
-        <div className="min-w-0 text-[12px] text-[var(--muted-2)]">
-          {takeoverIsFirstBid ? (
-            <span>Takeover · first bid {formatUsd(takeoverChargeUsd)} min</span>
-          ) : (
-            <span>
-              Takeover ·{" "}
-              <span className="tabular font-medium text-[var(--text)]">
-                {formatUsd(takeoverChargeUsd)}
+        <div className="min-w-0">
+          <p className="label">Full board</p>
+          <p className="mt-0.5 text-[12px] text-[var(--muted)]">
+            {takeoverIsFirstBid ? (
+              <span>First bid {formatUsd(takeoverChargeUsd)} min</span>
+            ) : (
+              <span>
+                Takeover{" "}
+                <span className="tabular font-medium text-[var(--muted-2)]">
+                  {formatUsd(takeoverChargeUsd)}
+                </span>
+                <span> · {takeoverHours}h lock</span>
+                {lockLeft && <span> · locked {lockLeft}</span>}
               </span>
-              <span className="text-[var(--muted)]"> · {takeoverHours}h lock</span>
-              {lockLeft && (
-                <span className="text-[var(--muted)]"> · locked {lockLeft}</span>
-              )}
-            </span>
-          )}
+            )}
+          </p>
         </div>
         <Link
           href="/claim"
-          className="btn-primary shrink-0 px-2.5 py-1 text-[12px]"
+          className="btn-ghost shrink-0 px-2.5 py-1.5 text-[12px]"
         >
-          Take #1
+          Bid
         </Link>
       </div>
 
@@ -72,7 +73,9 @@ export function Leaderboard({
           {entries.map((e) => (
             <li
               key={e.id}
-              className="grid grid-cols-[2.25rem_minmax(0,1fr)_4.5rem] items-center gap-2 px-3 py-2 sm:grid-cols-[2.75rem_minmax(0,1fr)_5rem] sm:px-4 sm:py-2.5"
+              className={`grid grid-cols-[2.25rem_minmax(0,1fr)_4.5rem] items-center gap-2 px-3 py-2 sm:grid-cols-[2.75rem_minmax(0,1fr)_5rem] sm:px-4 sm:py-2.5 ${
+                e.rank === 1 ? "bg-[var(--row-hot)]" : ""
+              }`}
             >
               <div
                 className={`tabular text-[13px] font-semibold ${
