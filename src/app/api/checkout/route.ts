@@ -149,6 +149,9 @@ export async function POST(req: Request) {
 
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      // Account may default Managed Payments on; disable so ad-hoc price_data
+      // products need no tax_code (avoids Checkout Session 500).
+      managed_payments: { enabled: false },
       customer_email: data.email,
       line_items: [
         {
