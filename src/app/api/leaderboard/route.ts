@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server";
-import { getDb, listLeaderboard, activeTakeoverLock, getNumberOne } from "@/lib/db";
+import {
+  ensureDb,
+  listLeaderboard,
+  activeTakeoverLock,
+  getNumberOne,
+} from "@/lib/db";
 import { getTakeoverHours } from "@/lib/config";
 import { computeTakeoverCharge } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
-  getDb();
-  const entries = listLeaderboard();
-  const lock = activeTakeoverLock();
-  const numberOne = getNumberOne();
+  await ensureDb();
+  const entries = await listLeaderboard();
+  const lock = await activeTakeoverLock();
+  const numberOne = await getNumberOne();
   const takeover = computeTakeoverCharge(numberOne?.total_usd ?? null);
 
   return NextResponse.json({

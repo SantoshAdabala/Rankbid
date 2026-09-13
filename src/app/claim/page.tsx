@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { ClaimForm } from "@/components/ClaimForm";
 import {
-  getDb,
+  ensureDb,
   seedDemoListings,
   activeTakeoverLock,
   getNumberOne,
@@ -17,11 +17,11 @@ export default async function ClaimPage({
 }: {
   searchParams: Promise<{ canceled?: string }>;
 }) {
-  getDb();
-  seedDemoListings();
+  await ensureDb();
+  await seedDemoListings();
   const params = await searchParams;
-  const lock = activeTakeoverLock();
-  const numberOne = getNumberOne();
+  const lock = await activeTakeoverLock();
+  const numberOne = await getNumberOne();
   const takeover = computeTakeoverCharge(numberOne?.total_usd ?? null);
   const hours = getTakeoverHours();
 

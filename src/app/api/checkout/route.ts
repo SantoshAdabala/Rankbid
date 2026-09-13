@@ -1,11 +1,15 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import {
-  getDb,
+  ensureDb,
   getListingByEmail,
   getListingById,
   getNumberOne,
   activeTakeoverLock,
+  reservePendingTakeover,
+  attachPendingTakeoverSession,
+  releasePendingTakeoverById,
+  TakeoverRaceError,
 } from "@/lib/db";
 import { getStripe } from "@/lib/stripe";
 import { getBaseUrl, stripeConfigured } from "@/lib/config";
@@ -32,8 +36,9 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: Request) {
+  let pendingId: string | undefined;
   try {
-    getDb();
+    await ensureDb();
 
     if (!stripeConfigured()) {
       return NextResponse.json(
@@ -57,16 +62,26 @@ export async function POST(req: Request) {
     const data = parsed.data;
     const logoUrl = data.logoUrl || undefined;
 
-    let existing =
-      (data.listingId ? getListingById(data.listingId) : null) ??
-      getListingByEmail(data.email);
+    const existing =
+      (data.listingId ? await getListingById(data.listingId) : null) ??
+      (await getListingByEmail(data.email));
+
+    if (existing?.frozen) {
+      return NextResponse.json(
+        {
+          error:
+            "This listing is frozen due to a payment dispute or refund review. Contact support.",
+        },
+        { status: 403 }
+      );
+    }
 
     let chargeUsd: number;
     let targetTotalUsd: number;
     let kind = data.kind;
 
     if (kind === "takeover") {
-      const lock = activeTakeoverLock();
+      const lock = await activeTakeoverLock();
       if (lock) {
         return NextResponse.json(
           {
@@ -75,19 +90,29 @@ export async function POST(req: Request) {
           { status: 409 }
         );
       }
-      const numberOne = getNumberOne();
+
+      // Short-lived reservation so two Checkouts cannot both pay before either webhook locks
+      try {
+        const reserved = await reservePendingTakeover(data.email);
+        pendingId = reserved.pendingId;
+      } catch (e) {
+        if (e instanceof TakeoverRaceError) {
+          return NextResponse.json({ error: e.message }, { status: 409 });
+        }
+        return NextResponse.json(
+          { error: e instanceof Error ? e.message : "Takeover reserved" },
+          { status: 409 }
+        );
+      }
+
+      const numberOne = await getNumberOne();
       const { chargeUsd: c, isFirstBid } = computeTakeoverCharge(
         numberOne?.total_usd ?? null
       );
       chargeUsd = c;
-      // For takeover, cumulative total becomes previous + charge (applied in webhook)
       targetTotalUsd = (existing?.total_usd ?? 0) + chargeUsd;
-      if (isFirstBid) {
-        // Documented: empty board → treat as normal first bid
-        kind = "takeover";
-      }
+      void isFirstBid; // empty board still uses kind=takeover (webhook treats as first bid + lock)
     } else {
-      // bid or rebid
       const target = data.targetTotalUsd;
       if (target === undefined || !isWholeUsd(target)) {
         return NextResponse.json(
@@ -113,7 +138,6 @@ export async function POST(req: Request) {
         }
         kind = "rebid";
       } else {
-        // New listing: charge = target total
         chargeUsd = target;
         kind = "bid";
       }
@@ -154,10 +178,16 @@ export async function POST(req: Request) {
         email: data.email,
         targetTotalUsd: String(targetTotalUsd),
         chargeUsd: String(chargeUsd),
+        pendingTakeoverId: pendingId ?? "",
       },
       success_url: `${baseUrl}/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${baseUrl}/claim?canceled=1`,
     });
+
+    if (pendingId && session.id) {
+      await attachPendingTakeoverSession(pendingId, session.id);
+      pendingId = undefined; // ownership transferred; do not release on success path
+    }
 
     return NextResponse.json({
       url: session.url,
@@ -167,6 +197,13 @@ export async function POST(req: Request) {
       kind,
     });
   } catch (e) {
+    if (pendingId) {
+      try {
+        await releasePendingTakeoverById(pendingId);
+      } catch {
+        /* ignore */
+      }
+    }
     console.error("checkout error", e);
     return NextResponse.json(
       { error: e instanceof Error ? e.message : "Checkout failed" },

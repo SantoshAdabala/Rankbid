@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Leaderboard } from "@/components/Leaderboard";
 import {
-  getDb,
+  ensureDb,
   listLeaderboard,
   seedDemoListings,
   activeTakeoverLock,
@@ -13,12 +13,12 @@ import { computeTakeoverCharge, MIN_BID_USD } from "@/lib/money";
 
 export const dynamic = "force-dynamic";
 
-export default function HomePage() {
-  getDb();
-  seedDemoListings();
-  const entries = listLeaderboard();
-  const lock = activeTakeoverLock();
-  const numberOne = getNumberOne();
+export default async function HomePage() {
+  await ensureDb();
+  await seedDemoListings();
+  const entries = await listLeaderboard();
+  const lock = await activeTakeoverLock();
+  const numberOne = await getNumberOne();
   const takeover = computeTakeoverCharge(numberOne?.total_usd ?? null);
   const hours = getTakeoverHours();
 

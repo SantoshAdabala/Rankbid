@@ -6,6 +6,7 @@ export type Listing = {
   logo_url: string | null;
   email: string;
   total_usd: number;
+  frozen: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -30,4 +31,26 @@ export type CheckoutMetadata = {
   targetTotalUsd: string;
   /** Amount charged this session (whole USD). */
   chargeUsd: string;
+};
+
+export type PaymentStatus =
+  | "applied"
+  | "refunded"
+  | "disputed"
+  | "takeover_lost_refunded"
+  | "takeover_lost_pending_refund";
+
+export type PaymentRow = {
+  id: string;
+  listing_id: string | null;
+  stripe_session_id: string | null;
+  stripe_payment_intent: string | null;
+  stripe_charge_id: string | null;
+  kind: string;
+  charge_usd: number;
+  unwound_usd: number;
+  status: PaymentStatus;
+  event_id: string | null;
+  created_at: string;
+  updated_at: string;
 };
