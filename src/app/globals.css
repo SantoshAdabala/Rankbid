@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #07080c;
+  --bg-elevated: #0e1018;
+  --panel: #12151f;
+  --border: #1e2433;
+  --text: #e8ecf7;
+  --muted: #8b93a7;
+  --accent: #7c5cff;
+  --accent-2: #22d3ee;
+  --gold: #f5c542;
+  --danger: #ff6b8a;
+  --ok: #34d399;
+}
+
+@theme inline {
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: radial-gradient(1200px 600px at 10% -10%, #1a1240 0%, transparent 55%),
+    radial-gradient(900px 500px at 90% 0%, #062a33 0%, transparent 50%),
+    var(--bg);
+  color: var(--text);
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  min-height: 100vh;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.rank-gold {
+  color: var(--gold);
+}
+
+.glow-panel {
+  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), transparent 40%),
+    var(--panel);
+  border: 1px solid var(--border);
+  box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.05), 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, #7c5cff, #5b8cff);
+  color: white;
+  font-weight: 600;
+  border-radius: 9999px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+  box-shadow: 0 8px 24px rgba(124, 92, 255, 0.35);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-ghost {
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 9999px;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: #2a3348;
+}
+
+.input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  color: var(--text);
+  outline: none;
+}
+
+.input:focus {
+  border-color: #6d5cff;
+  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
+}
+
+.mono {
+  font-family: var(--font-geist-mono), ui-monospace, monospace;
+}
