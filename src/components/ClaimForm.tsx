@@ -72,24 +72,27 @@ export function ClaimForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="glow-panel space-y-5 rounded-3xl p-6 sm:p-8">
+    <form onSubmit={onSubmit} className="panel space-y-4 p-4 sm:p-5">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Claim your spot</h1>
-        <p className="mt-2 text-sm text-[var(--muted)]">
-          Whole dollars only. Min ${MIN_BID_USD}. Rebids charge only the difference (server-side).
-          Takeover pays 2× current #1 and locks the top for {takeoverHours} hours.
+        <h1 className="text-lg font-semibold tracking-[-0.04em]">Claim your spot</h1>
+        <p className="mt-1 text-[12px] leading-relaxed text-[var(--muted-2)]">
+          Whole dollars only. Min ${MIN_BID_USD}. Rebids charge only the difference
+          (server-side). Takeover pays 2× current #1 and locks the top for{" "}
+          {takeoverHours} hours.
           {takeoverIsFirstBid && (
             <> If there is no #1 yet, takeover is treated as a normal first bid.</>
           )}
         </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-2 rounded-2xl border border-[var(--border)] bg-black/20 p-1">
+      <div className="grid grid-cols-2 border border-[var(--border)]">
         <button
           type="button"
           onClick={() => setKind("bid")}
-          className={`rounded-xl px-3 py-2.5 text-sm font-medium transition ${
-            kind === "bid" ? "bg-[var(--accent)] text-white" : "text-[var(--muted)]"
+          className={`px-3 py-2 text-[13px] font-medium ${
+            kind === "bid"
+              ? "bg-white text-black"
+              : "bg-transparent text-[var(--muted-2)]"
           }`}
         >
           Bid / Rebid
@@ -98,8 +101,10 @@ export function ClaimForm({
           type="button"
           onClick={() => setKind("takeover")}
           disabled={lockActive && !takeoverIsFirstBid}
-          className={`rounded-xl px-3 py-2.5 text-sm font-medium transition disabled:opacity-40 ${
-            kind === "takeover" ? "bg-[var(--gold)] text-black" : "text-[var(--muted)]"
+          className={`border-l border-[var(--border)] px-3 py-2 text-[13px] font-medium disabled:opacity-40 ${
+            kind === "takeover"
+              ? "bg-white text-black"
+              : "bg-transparent text-[var(--muted-2)]"
           }`}
         >
           Takeover #1
@@ -107,23 +112,23 @@ export function ClaimForm({
       </div>
 
       {kind === "takeover" && (
-        <div className="rounded-2xl border border-[rgba(245,197,66,0.3)] bg-[rgba(245,197,66,0.08)] px-4 py-3 text-sm">
+        <div className="border border-[var(--border)] bg-[var(--panel)] px-3 py-2 text-[12px] text-[var(--muted-2)]">
           {takeoverIsFirstBid ? (
             <>Board empty — takeover = first bid at ${takeoverChargeUsd}.</>
           ) : lockActive ? (
             <>Takeover currently locked until {new Date(lockedUntil!).toLocaleString()}.</>
           ) : (
             <>
-              Charge <strong>${takeoverChargeUsd}</strong> (2× current #1). Locks #1 for{" "}
-              {takeoverHours}h. First lock wins.
+              Charge <strong className="tabular text-[var(--text)]">${takeoverChargeUsd}</strong>{" "}
+              (2× current #1). Locks #1 for {takeoverHours}h. First lock wins.
             </>
           )}
         </div>
       )}
 
-      <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block space-y-1.5 sm:col-span-2">
-          <span className="text-sm text-[var(--muted)]">Product name</span>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <label className="block space-y-1 sm:col-span-2">
+          <span className="label">Product name</span>
           <input
             className="input"
             required
@@ -133,8 +138,8 @@ export function ClaimForm({
             placeholder="PixelForge AI"
           />
         </label>
-        <label className="block space-y-1.5 sm:col-span-2">
-          <span className="text-sm text-[var(--muted)]">URL</span>
+        <label className="block space-y-1 sm:col-span-2">
+          <span className="label">URL</span>
           <input
             className="input"
             required
@@ -144,8 +149,8 @@ export function ClaimForm({
             placeholder="https://yoursite.com"
           />
         </label>
-        <label className="block space-y-1.5 sm:col-span-2">
-          <span className="text-sm text-[var(--muted)]">Tagline</span>
+        <label className="block space-y-1 sm:col-span-2">
+          <span className="label">Tagline</span>
           <input
             className="input"
             maxLength={160}
@@ -154,8 +159,8 @@ export function ClaimForm({
             placeholder="One line. Make it count."
           />
         </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm text-[var(--muted)]">Logo URL (optional)</span>
+        <label className="block space-y-1">
+          <span className="label">Logo URL (optional)</span>
           <input
             className="input"
             type="url"
@@ -164,8 +169,8 @@ export function ClaimForm({
             placeholder="https://..."
           />
         </label>
-        <label className="block space-y-1.5">
-          <span className="text-sm text-[var(--muted)]">Email (receipt + identity)</span>
+        <label className="block space-y-1">
+          <span className="label">Email (receipt + identity)</span>
           <input
             className="input"
             required
@@ -176,30 +181,36 @@ export function ClaimForm({
           />
         </label>
         {kind === "bid" && (
-          <label className="block space-y-1.5 sm:col-span-2">
-            <span className="text-sm text-[var(--muted)]">
-              Cumulative total (USD, whole dollars). Rebid = pay only the difference.
+          <label className="block space-y-1 sm:col-span-2">
+            <span className="label">
+              Cumulative total (USD) — rebid = pay the difference
             </span>
             <input
-              className="input mono"
+              className="input tabular"
               required
               type="number"
               min={MIN_BID_USD}
               step={1}
               value={targetTotalUsd}
-              onChange={(e) => setTargetTotalUsd(Number.parseInt(e.target.value || "0", 10))}
+              onChange={(e) =>
+                setTargetTotalUsd(Number.parseInt(e.target.value || "0", 10))
+              }
             />
           </label>
         )}
       </div>
 
       {error && (
-        <div className="rounded-2xl border border-[rgba(255,107,138,0.35)] bg-[rgba(255,107,138,0.1)] px-4 py-3 text-sm text-[var(--danger)]">
+        <div className="border border-[var(--border-strong)] px-3 py-2 text-[12px] text-[var(--muted-2)]">
           {error}
         </div>
       )}
 
-      <button type="submit" disabled={loading} className="btn-primary w-full px-5 py-3.5 text-base">
+      <button
+        type="submit"
+        disabled={loading}
+        className="btn-primary w-full px-4 py-2.5 text-[13px]"
+      >
         {loading
           ? "Redirecting to Stripe…"
           : kind === "takeover"

@@ -1,33 +1,28 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #07080c;
-  --bg-elevated: #0e1018;
-  --panel: #12151f;
-  --border: #1e2433;
-  --text: #e8ecf7;
-  --muted: #8b93a7;
-  --accent: #7c5cff;
-  --accent-2: #22d3ee;
-  --gold: #f5c542;
-  --danger: #ff6b8a;
-  --ok: #34d399;
+  --bg: #000000;
+  --panel: #0a0a0a;
+  --border: #1a1a1a;
+  --border-strong: #2e2e2e;
+  --text: #ffffff;
+  --muted: #737373;
+  --muted-2: #a3a3a3;
+  --danger: #a3a3a3;
 }
 
 @theme inline {
   --color-background: var(--bg);
   --color-foreground: var(--text);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-sans);
 }
 
 body {
-  background: radial-gradient(1200px 600px at 10% -10%, #1a1240 0%, transparent 55%),
-    radial-gradient(900px 500px at 90% 0%, #062a33 0%, transparent 50%),
-    var(--bg);
+  background: var(--bg);
   color: var(--text);
-  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
   min-height: 100vh;
+  letter-spacing: -0.015em;
 }
 
 * {
@@ -39,64 +34,77 @@ a {
   text-decoration: none;
 }
 
-.rank-gold {
-  color: var(--gold);
+::selection {
+  background: #fff;
+  color: #000;
 }
 
-.glow-panel {
-  background: linear-gradient(180deg, rgba(124, 92, 255, 0.08), transparent 40%),
-    var(--panel);
+.panel {
+  background: var(--panel);
   border: 1px solid var(--border);
-  box-shadow: 0 0 0 1px rgba(124, 92, 255, 0.05), 0 20px 60px rgba(0, 0, 0, 0.35);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, #7c5cff, #5b8cff);
-  color: white;
+  background: #fff;
+  color: #000;
   font-weight: 600;
-  border-radius: 9999px;
-  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
-  box-shadow: 0 8px 24px rgba(124, 92, 255, 0.35);
+  letter-spacing: -0.02em;
+  border-radius: 2px;
+  border: 1px solid #fff;
+  transition: opacity 0.12s ease;
 }
 
 .btn-primary:hover {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
+  opacity: 0.88;
 }
 
 .btn-primary:disabled {
-  opacity: 0.55;
+  opacity: 0.45;
   cursor: not-allowed;
-  transform: none;
 }
 
 .btn-ghost {
   border: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 9999px;
-  transition: background 0.15s ease, border-color 0.15s ease;
+  background: transparent;
+  border-radius: 2px;
+  color: var(--muted-2);
+  transition: border-color 0.12s ease, color 0.12s ease;
 }
 
 .btn-ghost:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: #2a3348;
+  border-color: var(--border-strong);
+  color: var(--text);
 }
 
 .input {
   width: 100%;
-  background: var(--bg-elevated);
+  background: #000;
   border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 0.75rem 1rem;
+  border-radius: 2px;
+  padding: 0.55rem 0.7rem;
   color: var(--text);
+  font-size: 0.875rem;
+  letter-spacing: -0.01em;
   outline: none;
 }
 
 .input:focus {
-  border-color: #6d5cff;
-  box-shadow: 0 0 0 3px rgba(124, 92, 255, 0.2);
+  border-color: #fff;
 }
 
-.mono {
-  font-family: var(--font-geist-mono), ui-monospace, monospace;
+.input::placeholder {
+  color: var(--muted);
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.03em;
+}
+
+.label {
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
 }

@@ -28,11 +28,11 @@ export default async function ClaimPage({
   return (
     <>
       <Header />
-      <main className="mx-auto w-full max-w-xl flex-1 px-4 pb-20 sm:px-6">
+      <main className="mx-auto w-full max-w-md flex-1 px-4 pb-12 pt-4 sm:px-5">
         {params.canceled && (
-          <div className="mb-4 rounded-2xl border border-[var(--border)] bg-black/30 px-4 py-3 text-sm text-[var(--muted)]">
+          <div className="mb-3 border border-[var(--border)] px-3 py-2 text-[12px] text-[var(--muted-2)]">
             Checkout canceled. No charge.{" "}
-            <Link href="/" className="underline">
+            <Link href="/" className="underline underline-offset-2">
               Back to board
             </Link>
           </div>

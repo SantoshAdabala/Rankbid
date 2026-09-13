@@ -2,24 +2,18 @@ import Link from "next/link";
 
 export function Header() {
   return (
-    <header className="mx-auto flex w-full max-w-5xl items-center justify-between px-4 py-6 sm:px-6">
-      <Link href="/" className="flex items-center gap-2">
-        <span className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-[#7c5cff] to-[#22d3ee] text-sm font-bold text-white">
-          R
-        </span>
-        <span className="text-lg font-semibold tracking-tight">Rankbid</span>
-      </Link>
-      <nav className="flex items-center gap-3 text-sm">
-        <a href="#board" className="btn-ghost hidden px-4 py-2 text-[var(--muted)] sm:inline-flex">
-          Leaderboard
-        </a>
-        <a href="#rules" className="btn-ghost hidden px-4 py-2 text-[var(--muted)] sm:inline-flex">
-          Rules
-        </a>
-        <Link href="/claim" className="btn-primary px-5 py-2.5 text-sm">
-          Claim your spot
+    <header className="border-b border-[var(--border)]">
+      <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-4 px-4 py-3 sm:px-5">
+        <Link href="/" className="min-w-0">
+          <div className="text-[15px] font-semibold tracking-[-0.04em]">Rankbid</div>
+          <div className="truncate text-[12px] text-[var(--muted)]">
+            Pay $1 more. Take #1. Rank = dollars.
+          </div>
         </Link>
-      </nav>
+        <Link href="/claim" className="btn-primary shrink-0 px-3 py-1.5 text-[13px]">
+          Claim
+        </Link>
+      </div>
     </header>
   );
 }

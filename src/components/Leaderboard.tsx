@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { LeaderboardEntry } from "@/lib/types";
 
 type Props = {
@@ -30,83 +31,79 @@ export function Leaderboard({
   const lockLeft = lockLabel(lockedUntil);
 
   return (
-    <section id="board" className="glow-panel overflow-hidden rounded-3xl">
-      <div className="flex flex-col gap-2 border-b border-[var(--border)] px-5 py-5 sm:flex-row sm:items-end sm:justify-between sm:px-7">
-        <div>
-          <p className="mono text-xs uppercase tracking-[0.2em] text-[var(--accent-2)]">
-            Live board
-          </p>
-          <h2 className="mt-1 text-2xl font-semibold tracking-tight">Indie AI & SaaS ranks</h2>
-          <p className="mt-1 text-sm text-[var(--muted)]">
-            Rank = cumulative dollars. No algo. No get-rich-quick claims — just paid status.
-          </p>
-        </div>
-        <div className="rounded-2xl border border-[var(--border)] bg-black/20 px-4 py-3 text-sm">
-          <div className="text-[var(--muted)]">Takeover</div>
-          <div className="font-semibold">
-            {takeoverIsFirstBid ? (
-              <>No #1 yet → first bid (${takeoverChargeUsd} min)</>
-            ) : (
-              <>Pay {formatUsd(takeoverChargeUsd)} · lock #1 for {takeoverHours}h</>
-            )}
-          </div>
-          {lockLeft && (
-            <div className="mt-1 text-xs text-[var(--gold)]">#1 locked · {lockLeft}</div>
+    <section id="board" className="panel overflow-hidden">
+      <div className="flex items-center justify-between gap-3 border-b border-[var(--border)] px-3 py-2.5 sm:px-4">
+        <div className="min-w-0 text-[12px] text-[var(--muted-2)]">
+          {takeoverIsFirstBid ? (
+            <span>Takeover · first bid {formatUsd(takeoverChargeUsd)} min</span>
+          ) : (
+            <span>
+              Takeover ·{" "}
+              <span className="tabular font-medium text-[var(--text)]">
+                {formatUsd(takeoverChargeUsd)}
+              </span>
+              <span className="text-[var(--muted)]"> · {takeoverHours}h lock</span>
+              {lockLeft && (
+                <span className="text-[var(--muted)]"> · locked {lockLeft}</span>
+              )}
+            </span>
           )}
         </div>
+        <Link
+          href="/claim"
+          className="btn-primary shrink-0 px-2.5 py-1 text-[12px]"
+        >
+          Take #1
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-[2.25rem_minmax(0,1fr)_4.5rem] gap-2 border-b border-[var(--border)] px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.08em] text-[var(--muted)] sm:grid-cols-[2.75rem_minmax(0,1fr)_5rem] sm:px-4">
+        <div>#</div>
+        <div>Name</div>
+        <div className="text-right">$</div>
       </div>
 
       {entries.length === 0 ? (
-        <div className="px-7 py-16 text-center text-[var(--muted)]">
-          Board is empty. Be the first — claim from $2.
+        <div className="px-4 py-10 text-center text-[13px] text-[var(--muted)]">
+          Board empty. Claim from $2.
         </div>
       ) : (
         <ul className="divide-y divide-[var(--border)]">
           {entries.map((e) => (
             <li
               key={e.id}
-              className={`flex items-center gap-4 px-5 py-4 sm:px-7 ${
-                e.rank === 1 ? "bg-[rgba(245,197,66,0.06)]" : ""
-              }`}
+              className="grid grid-cols-[2.25rem_minmax(0,1fr)_4.5rem] items-center gap-2 px-3 py-2 sm:grid-cols-[2.75rem_minmax(0,1fr)_5rem] sm:px-4 sm:py-2.5"
             >
               <div
-                className={`mono w-10 shrink-0 text-center text-lg font-bold ${
-                  e.rank === 1 ? "rank-gold" : "text-[var(--muted)]"
+                className={`tabular text-[13px] font-semibold ${
+                  e.rank === 1 ? "text-[var(--text)]" : "text-[var(--muted)]"
                 }`}
               >
-                #{e.rank}
+                {e.rank}
               </div>
-              <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] text-sm font-semibold">
-                {e.logo_url ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
-                    src={e.logo_url}
-                    alt=""
-                    className="h-11 w-11 rounded-2xl object-cover"
-                  />
-                ) : (
-                  e.name.slice(0, 2).toUpperCase()
-                )}
-              </div>
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-wrap items-center gap-2">
+              <div className="min-w-0">
+                <div className="flex items-baseline gap-1.5">
                   <a
                     href={e.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="truncate font-semibold hover:underline"
+                    className="truncate text-[13px] font-medium tracking-[-0.02em] hover:underline sm:text-[14px]"
                   >
                     {e.name}
                   </a>
                   {e.rank === 1 && e.is_locked && (
-                    <span className="rounded-full border border-[rgba(245,197,66,0.35)] bg-[rgba(245,197,66,0.12)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--gold)]">
-                      Locked
+                    <span className="shrink-0 text-[10px] uppercase tracking-[0.06em] text-[var(--muted)]">
+                      locked
                     </span>
                   )}
                 </div>
-                <p className="truncate text-sm text-[var(--muted)]">{e.tagline || e.url}</p>
+                {(e.tagline || e.url) && (
+                  <p className="truncate text-[11px] text-[var(--muted)] sm:text-[12px]">
+                    {e.tagline || e.url}
+                  </p>
+                )}
               </div>
-              <div className="mono shrink-0 text-right text-base font-semibold sm:text-lg">
+              <div className="tabular shrink-0 text-right text-[13px] font-semibold sm:text-[14px]">
                 {formatUsd(e.total_usd)}
               </div>
             </li>
